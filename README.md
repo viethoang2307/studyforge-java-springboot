@@ -12,6 +12,7 @@ thích các quyết định kỹ thuật thay vì chỉ chạy được tutorial
 ## Mục lục
 
 - [Tháng 1–2: Java Core](#tháng-12-từ-zero-đến-java-core)
+- [Thực hành JVM](./jvm-lab/README.md)
 - [Tháng 3: Computer Science](#tháng-3-nền-tảng-computer-science)
 - [Tháng 4: SQL và PostgreSQL](#tháng-4-sql-và-postgresql)
 - [Tháng 5–6: Spring Boot và REST API](#tháng-56-spring-boot-và-rest-api)
@@ -273,3 +274,10 @@ studyforge-java-springboot/
 Commit theo lát cắt nhỏ có thể kiểm chứng (ví dụ: `feat: validate transfer
 amount`) và mở pull request để tự review thiết kế, test và tài liệu trước khi
 merge.
+
+## Phòng lab JVM
+
+Thư mục [`jvm-lab`](./jvm-lab/) là một bài thực hành độc lập để nối chuỗi
+source code → bytecode → class loading → thực thi/JIT, quan sát vùng nhớ và GC,
+đồng thời tái hiện có kiểm soát `StackOverflowError` và heap
+`OutOfMemoryError`. Lab chỉ cần JDK 17 trở lên và không cần Maven.
