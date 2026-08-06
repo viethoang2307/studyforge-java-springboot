@@ -13,6 +13,7 @@ thích các quyết định kỹ thuật thay vì chỉ chạy được tutorial
 
 - [Tháng 1–2: Java Core](#tháng-12-từ-zero-đến-java-core)
 - [Tháng 3: Computer Science](#tháng-3-nền-tảng-computer-science)
+- [Chuyên đề: Java Concurrency](#chuyên-đề-java-concurrency)
 - [Tháng 4: SQL và PostgreSQL](#tháng-4-sql-và-postgresql)
 - [Tháng 5–6: Spring Boot và REST API](#tháng-56-spring-boot-và-rest-api)
 - [Tháng 7: Security và testing](#tháng-7-security-và-testing)
@@ -22,6 +23,10 @@ thích các quyết định kỹ thuật thay vì chỉ chạy được tutorial
 - [Nguồn học chính thức](#nguồn-học-chính-thức)
 
 ## Tháng 1–2: Từ zero đến Java Core
+
+> Bài thực hành nền tảng: [mô hình dữ liệu và object trong
+> Java](java-object-model.md), kèm các chương trình nhỏ có assertion để kiểm
+> chứng primitive/reference, equality, pass-by-value, boxing và biểu diễn số.
 
 ### Kiến thức
 
@@ -54,6 +59,10 @@ Xây dựng ứng dụng dòng lệnh có thể:
 
 ## Tháng 3: Nền tảng Computer Science
 
+> **Tài liệu thực hành:** [HTTP, Networking, hệ điều hành và hành trình của một
+> request](docs/http-networking-os.md) — gồm lý thuyết nền, lệnh `curl` và mô tả
+> đầy đủ luồng từ lúc nhập URL đến khi nhận response.
+
 ### DSA đủ dùng cho phỏng vấn Junior
 
 - Big-O; array và linked list.
@@ -75,6 +84,163 @@ hệ thống, testing và debugging, không chỉ thuật toán.
 
 **Mốc kiểm tra:** tự mô tả hành trình của một HTTP request từ trình duyệt tới
 server; phân tích độ phức tạp của lời giải; xử lý được một merge conflict nhỏ.
+
+## Chuyên đề: Java Concurrency
+
+Học chuyên đề này sau Java Core và trước khi xử lý tác vụ nền trong Spring.
+Mục tiêu không phải là tạo thật nhiều thread, mà là biết giới hạn tài nguyên,
+truyền lỗi đúng cách và dừng ứng dụng mà không làm mất công việc đang chạy.
+
+### 1. Từ thread thủ công đến `ExecutorService`
+
+- Không tạo `new Thread(...)` cho từng task. Cách này không giới hạn số thread,
+  tốn chi phí tạo/hủy thread và khó quản lý lifecycle.
+- Submit `Runnable` hoặc `Callable` vào một `ExecutorService`; executor chịu
+  trách nhiệm tái sử dụng worker thread và điều phối task.
+- Bắt đầu với `ThreadPoolExecutor` để nhìn rõ các tham số thay vì chỉ ghi nhớ
+  các factory method của `Executors`.
+
+```java
+ExecutorService executor = new ThreadPoolExecutor(
+        4,                         // corePoolSize
+        8,                         // maximumPoolSize
+        30, TimeUnit.SECONDS,
+        new ArrayBlockingQueue<>(100),
+        new ThreadPoolExecutor.CallerRunsPolicy());
+```
+
+Khi có task mới, pool ưu tiên tạo worker đến `corePoolSize`, sau đó đưa task
+vào queue. Chỉ khi queue đầy mới tăng worker đến `maximumPoolSize`; nếu cả pool
+và queue đều đầy thì áp dụng rejection policy. Vì vậy queue không giới hạn có
+thể khiến `maximumPoolSize` gần như vô nghĩa và che giấu tình trạng quá tải.
+
+So sánh bốn policy chuẩn:
+
+| Policy | Hành vi | Khi cân nhắc |
+| --- | --- | --- |
+| `AbortPolicy` | Ném `RejectedExecutionException` | Muốn fail fast và báo lỗi rõ ràng |
+| `CallerRunsPolicy` | Thread submit tự chạy task | Tạo backpressure đơn giản |
+| `DiscardPolicy` | Bỏ task mới | Chỉ khi mất task được chấp nhận và có metric |
+| `DiscardOldestPolicy` | Bỏ task cũ nhất trong queue | Hiếm dùng; phải chứng minh task cũ không còn giá trị |
+
+Luôn chọn queue capacity, pool size và policy một cách có chủ đích; ghi metric
+cho queue depth, active thread, thời gian chờ và số task bị reject.
+
+### 2. `Callable`, `Future` và quản lý kết quả
+
+`Runnable` không trả kết quả và không khai báo checked exception. Dùng
+`Callable<T>` khi task cần trả về `T` hoặc báo lỗi; `submit` trả về `Future<T>`.
+
+```java
+Future<Receipt> future = executor.submit(() -> process(transaction));
+
+try {
+    Receipt receipt = future.get(2, TimeUnit.SECONDS);
+} catch (TimeoutException timeout) {
+    future.cancel(true);
+} catch (ExecutionException failed) {
+    Throwable cause = failed.getCause();
+    // log/translate cause; không nuốt lỗi
+} catch (InterruptedException interrupted) {
+    Thread.currentThread().interrupt();
+}
+```
+
+`cancel(true)` chỉ gửi tín hiệu interrupt, không bảo đảm task sẽ dừng. Code xử
+lý task phải tôn trọng interruption, dùng API có thể interrupt và không được
+nuốt `InterruptedException`. Timeout cũng không đồng nghĩa nghiệp vụ đã rollback;
+thiết kế task idempotent và xác định ranh giới transaction rõ ràng.
+
+### 3. Composition với `CompletableFuture`
+
+Dùng `CompletableFuture` để mô tả pipeline thay vì gọi `Future.get()` tuần tự:
+
+```java
+CompletableFuture<Receipt> result = CompletableFuture
+        .supplyAsync(() -> validate(transaction), executor)
+        .thenCompose(valid -> debitAndCreditAsync(valid, executor))
+        .thenCombine(loadRiskScoreAsync(transaction, executor),
+                this::attachRiskScore)
+        .orTimeout(3, TimeUnit.SECONDS)
+        .whenComplete((receipt, error) -> recordMetrics(error));
+```
+
+- `thenApply`: biến đổi kết quả đồng bộ; `thenCompose`: nối một async stage và
+  tránh `CompletableFuture<CompletableFuture<T>>`.
+- `thenCombine`: gộp hai công việc độc lập; `allOf`: chờ một batch hoàn tất.
+- `exceptionally` cung cấp fallback, `handle` biến đổi cả success lẫn failure,
+  còn `whenComplete` phù hợp cho logging/metric mà không đổi kết quả.
+- Truyền executor tường minh cho các stage async quan trọng thay vì vô tình
+  dùng common pool. Đặt timeout ở ranh giới nghiệp vụ và kiểm tra root cause
+  (`CompletionException`) trong test.
+
+### 4. Bài thực hành: Batch Transaction Processor
+
+Xây một chương trình nhận danh sách giao dịch và xử lý song song qua bounded
+thread pool. Mỗi giao dịch có `idempotencyKey`; kết quả batch phải giữ được ID,
+trạng thái thành công/thất bại và nguyên nhân lỗi của từng phần tử.
+
+Yêu cầu triển khai theo từng bước:
+
+1. Viết phiên bản tuần tự làm baseline và đo throughput/latency.
+2. Dùng `Callable<TransactionResult>` và `Future` với timeout cho từng task.
+3. Viết lại orchestration bằng `CompletableFuture`, không block bên trong các
+   stage; dùng `allOf` để tạo báo cáo batch.
+4. Giới hạn queue; chọn rejection policy và test khi pool bị bão hòa.
+5. Mô phỏng task chậm, exception, timeout và cancellation; chứng minh task có
+   phản ứng với interrupt và lỗi của một item không làm mất kết quả item khác.
+6. Giữ database transaction ngắn và độc lập theo từng item. Không chia sẻ một
+   transaction hoặc mutable entity/session giữa các worker thread.
+
+**Definition of Done**
+
+- [ ] Không có `new Thread(...)` trong business code; executor được inject hoặc
+      được sở hữu bởi một component có lifecycle rõ ràng.
+- [ ] Queue có giới hạn, pool size và rejection policy có giải thích bằng số đo.
+- [ ] Có test cho success, partial failure, queue saturation, timeout,
+      cancellation, interrupt và duplicate idempotency key.
+- [ ] Không nuốt exception; báo cáo batch liên kết được lỗi với transaction ID.
+- [ ] Sau khi dừng, không còn worker thread và task đã nhận không bị mất âm thầm.
+
+### 5. Shutdown executor đúng cách
+
+Không chỉ gọi `shutdownNow()` ngay lập tức. Ngừng nhận task mới, chờ task đang
+chạy hoàn tất trong một khoảng hữu hạn, rồi mới interrupt phần còn lại:
+
+```java
+static void shutdown(ExecutorService executor) {
+    executor.shutdown();
+    try {
+        if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+            executor.shutdownNow();
+            if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+                System.err.println("Executor did not terminate");
+            }
+        }
+    } catch (InterruptedException interrupted) {
+        executor.shutdownNow();
+        Thread.currentThread().interrupt();
+    }
+}
+```
+
+Trong Spring, đặt executor trong bean và khai báo destroy method hoặc đóng nó
+ở `@PreDestroy`. Owner tạo executor là owner chịu trách nhiệm shutdown; không
+shutdown executor dùng chung từ code xử lý một request.
+
+### 6. CPU-bound và I/O-bound
+
+| Workload | Dấu hiệu | Điểm bắt đầu để sizing |
+| --- | --- | --- |
+| CPU-bound | Tính toán, ít chờ I/O, CPU gần bão hòa | Xấp xỉ số CPU core (có thể `cores + 1`) |
+| I/O-bound | Chờ DB/HTTP/file phần lớn thời gian | Có thể lớn hơn số core, nhưng phải giới hạn theo downstream |
+
+Với I/O-bound có thể ước lượng ban đầu `threads = cores × (1 + wait/compute)`,
+sau đó load test và điều chỉnh. Đây không phải công thức bảo đảm: connection
+pool, rate limit của downstream, memory, latency target và queue wait mới là
+các giới hạn thực tế. Tách pool cho workload CPU-bound và blocking I/O để task
+chậm không gây starvation cho toàn hệ thống; không tăng thread chỉ để che một
+dependency đang quá tải.
 
 ## Tháng 4: SQL và PostgreSQL
 
@@ -246,6 +412,8 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 Ưu tiên documentation và guide chính thức; dùng video/blog như nguồn bổ trợ:
 
 - [Dev.java — Learn Java](https://dev.java/learn/)
+- [Java API — `ExecutorService`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ExecutorService.html)
+- [Java API — `CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)
 - [JUnit 5 User Guide](https://junit.org/junit5/docs/current/user-guide/)
 - [Apache Maven — Getting Started](https://maven.apache.org/guides/getting-started/)
 - [PostgreSQL Tutorial](https://www.postgresql.org/docs/current/tutorial.html)
@@ -265,6 +433,26 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 - [`01-streams-optional`](01-streams-optional/README.md): functional interface,
   method reference, Stream API, báo cáo giao dịch và cách dùng `Optional` đúng
   chỗ.
+### Lab hiện có
+
+- [`collections-lab`](collections-lab/README.md): contract của Java Collections,
+  hashing, ordering/equality, iterator fail-fast, JMH benchmark và transaction
+  history hỗ trợ filter, sort, group.
+### Bài mẫu Java Core
+
+- [`notification-composition-demo`](notification-composition-demo/README.md):
+  interface và abstract class, default method, is-a/has-a, cùng bài refactor từ
+  inheritance sai sang notification strategy dùng composition.
+### Bài thực hành Java Core
+
+- [`00-java-object-contracts`](00-java-object-contracts/README.md): identity,
+  contract của `equals`/`hashCode`, lỗi mutable hash key, immutable value object
+  và defensive copy kèm JUnit tests.
+### Bài tập hiện có
+
+- [`01-banking-cli`](01-banking-cli/README.md): class, constructor chaining,
+  access modifier, instance/static member, `final`, encapsulation và invariant
+  của `BankAccount`, kèm unit test JUnit 5.
 
 Mỗi project nên nằm trong một thư mục riêng và có README riêng, ví dụ:
 
@@ -279,3 +467,29 @@ studyforge-java-springboot/
 Commit theo lát cắt nhỏ có thể kiểm chứng (ví dụ: `feat: validate transfer
 amount`) và mở pull request để tự review thiết kế, test và tài liệu trước khi
 merge.
+
+## Ví dụ SOLID: nghiệp vụ chuyển tiền
+
+Ví dụ trong `src/main/java/com/studyforge/transfer` đặt bốn abstraction nhỏ ở
+phía nghiệp vụ: `AccountRepository`, `TransactionRepository`,
+`NotificationPort` và `Clock`. `TransferService` chỉ biết các capability nó
+cần; nó không phụ thuộc JPA, SDK email hay đồng hồ hệ thống. Các implementation
+in-memory trong test cho thấy có thể kiểm thử policy chuyển tiền mà không khởi
+động Spring hoặc database.
+
+Đây là **Interface Segregation Principle (ISP)** vì notification không bị ép
+cài các method đọc/ghi account, và repository giao dịch không bị ép cung cấp
+method mà service không dùng. Không có interface cho `Account`, `Transaction`
+hay các exception: chúng không có nhiều capability/client hoặc ranh giới hạ
+tầng cần thay thế, nên thêm abstraction chỉ tạo boilerplate.
+
+Đây cũng là **Dependency Inversion Principle (DIP)**: policy cấp cao
+`TransferService` sở hữu nhu cầu dưới dạng port, còn adapter hạ tầng sẽ phụ
+thuộc vào port đó. **Dependency injection (DI)** là cơ chế truyền object cụ thể
+vào constructor. DIP là quyết định về hướng phụ thuộc trong thiết kế; DI chỉ là
+một cách nối object để hiện thực quyết định ấy. Có thể dùng DI nhưng vẫn vi phạm
+DIP (ví dụ inject thẳng một class SDK email vào service), và có thể áp dụng DIP
+bằng cách tự khởi tạo/wire adapter mà không cần DI framework.
+## Bài thực hành bổ sung
+
+- [`solid-transfer`](solid-transfer/README.md): characterization test và refactor SRP/OCP, kèm phân tích LSP về `Square extends Rectangle`, precondition, postcondition và invariant.
