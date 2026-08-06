@@ -54,6 +54,10 @@ Xây dựng ứng dụng dòng lệnh có thể:
 
 ## Tháng 3: Nền tảng Computer Science
 
+> **Tài liệu thực hành:** [HTTP, Networking, hệ điều hành và hành trình của một
+> request](docs/http-networking-os.md) — gồm lý thuyết nền, lệnh `curl` và mô tả
+> đầy đủ luồng từ lúc nhập URL đến khi nhận response.
+
 ### DSA đủ dùng cho phỏng vấn Junior
 
 - Big-O; array và linked list.
