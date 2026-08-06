@@ -260,6 +260,12 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Lab hiện có
+
+- [`collections-lab`](collections-lab/README.md): contract của Java Collections,
+  hashing, ordering/equality, iterator fail-fast, JMH benchmark và transaction
+  history hỗ trợ filter, sort, group.
+
 Mỗi project nên nằm trong một thư mục riêng và có README riêng, ví dụ:
 
 ```text
