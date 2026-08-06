@@ -443,6 +443,9 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ### Bài thực hành hiện có
 
+- [`01-oop-payments`](01-oop-payments/README.md): học encapsulation, abstraction,
+  inheritance, composition và polymorphism qua ba phương thức thanh toán, kèm
+  unit test cho từng implementation.
 - [`01-streams-optional`](01-streams-optional/README.md): functional interface,
   method reference, Stream API, báo cáo giao dịch và cách dùng `Optional` đúng
   chỗ.
