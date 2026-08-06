@@ -268,6 +268,12 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Bài tập hiện có
+
+- [`01-banking-cli`](01-banking-cli/README.md): class, constructor chaining,
+  access modifier, instance/static member, `final`, encapsulation và invariant
+  của `BankAccount`, kèm unit test JUnit 5.
+
 Mỗi project nên nằm trong một thư mục riêng và có README riêng, ví dụ:
 
 ```text
