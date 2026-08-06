@@ -260,6 +260,12 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Bài thực hành hiện có
+
+- [`01-streams-optional`](01-streams-optional/README.md): functional interface,
+  method reference, Stream API, báo cáo giao dịch và cách dùng `Optional` đúng
+  chỗ.
+
 Mỗi project nên nằm trong một thư mục riêng và có README riêng, ví dụ:
 
 ```text
