@@ -428,6 +428,11 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Lab hiện có
+
+- [`collections-lab`](collections-lab/README.md): contract của Java Collections,
+  hashing, ordering/equality, iterator fail-fast, JMH benchmark và transaction
+  history hỗ trợ filter, sort, group.
 ### Bài mẫu Java Core
 
 - [`notification-composition-demo`](notification-composition-demo/README.md):
