@@ -23,6 +23,10 @@ thích các quyết định kỹ thuật thay vì chỉ chạy được tutorial
 
 ## Tháng 1–2: Từ zero đến Java Core
 
+> Bài thực hành nền tảng: [mô hình dữ liệu và object trong
+> Java](java-object-model.md), kèm các chương trình nhỏ có assertion để kiểm
+> chứng primitive/reference, equality, pass-by-value, boxing và biểu diễn số.
+
 ### Kiến thức
 
 - Biến, kiểu dữ liệu, điều kiện, vòng lặp và hàm.
@@ -53,6 +57,10 @@ Xây dựng ứng dụng dòng lệnh có thể:
 - [ ] `mvn test` chạy xanh, bao gồm cả happy path và failure path.
 
 ## Tháng 3: Nền tảng Computer Science
+
+> **Tài liệu thực hành:** [HTTP, Networking, hệ điều hành và hành trình của một
+> request](docs/http-networking-os.md) — gồm lý thuyết nền, lệnh `curl` và mô tả
+> đầy đủ luồng từ lúc nhập URL đến khi nhận response.
 
 ### DSA đủ dùng cho phỏng vấn Junior
 
@@ -260,6 +268,17 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Bài thực hành Java Core
+
+- [`00-java-object-contracts`](00-java-object-contracts/README.md): identity,
+  contract của `equals`/`hashCode`, lỗi mutable hash key, immutable value object
+  và defensive copy kèm JUnit tests.
+### Bài tập hiện có
+
+- [`01-banking-cli`](01-banking-cli/README.md): class, constructor chaining,
+  access modifier, instance/static member, `final`, encapsulation và invariant
+  của `BankAccount`, kèm unit test JUnit 5.
+
 Mỗi project nên nằm trong một thư mục riêng và có README riêng, ví dụ:
 
 ```text
@@ -296,3 +315,6 @@ vào constructor. DIP là quyết định về hướng phụ thuộc trong thi�
 một cách nối object để hiện thực quyết định ấy. Có thể dùng DI nhưng vẫn vi phạm
 DIP (ví dụ inject thẳng một class SDK email vào service), và có thể áp dụng DIP
 bằng cách tự khởi tạo/wire adapter mà không cần DI framework.
+## Bài thực hành bổ sung
+
+- [`solid-transfer`](solid-transfer/README.md): characterization test và refactor SRP/OCP, kèm phân tích LSP về `Square extends Rectangle`, precondition, postcondition và invariant.
