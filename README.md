@@ -1,5 +1,8 @@
 # StudyForge — Lộ trình Java Backend trong 12 tháng
 
+> **Bài thực hành hiện tại:** [Banking Core thuần Java](BANKING_CORE.md) triển khai account,
+> deposit, withdrawal, transfer, lịch sử, fee strategy, notification port và các invariant bằng test.
+
 Lộ trình này dành cho người bắt đầu từ con số 0, học khoảng **10–12 giờ mỗi
 tuần**. Mục tiêu cuối năm là có nền tảng Java Backend vững, một project
 Digital Wallet đủ chiều sâu để trình bày khi ứng tuyển Junior, và khả năng giải
@@ -12,11 +15,13 @@ thích các quyết định kỹ thuật thay vì chỉ chạy được tutorial
 ## Mục lục
 
 - [Tháng 1–2: Java Core](#tháng-12-từ-zero-đến-java-core)
+- [Thực hành JVM](./jvm-lab/README.md)
 - [Tháng 3: Computer Science](#tháng-3-nền-tảng-computer-science)
 - [Chuyên đề: Java Concurrency](#chuyên-đề-java-concurrency)
 - [Tháng 4: SQL và PostgreSQL](#tháng-4-sql-và-postgresql)
 - [Tháng 5–6: Spring Boot và REST API](#tháng-56-spring-boot-và-rest-api)
 - [Tháng 7: Security và testing](#tháng-7-security-và-testing)
+- [Testing Lab thực hành](#testing-lab-thực-hành)
 - [Tháng 8–10: Backend production](#tháng-810-backend-production)
 - [Tháng 11–12: Capstone](#tháng-1112-capstone-digital-wallet-system)
 - [Lịch học và cách tự đánh giá](#lịch-học-mỗi-tuần)
@@ -323,6 +328,15 @@ dependency đang quá tải.
 thiếu tiền, tài khoản không tồn tại, số tiền không hợp lệ và rollback. Không lưu
 password thô, secret hay token vào Git/log.
 
+## Testing Lab thực hành
+
+Thư mục [`05-testing-lab`](05-testing-lab/README.md) là ví dụ chạy được về test
+pyramid, JUnit 5, Mockito, kiểm tra state/behavior, invariant và concurrent
+behavior. Module cũng cấu hình JaCoCo và cung cấp một bài tập refactor theo vòng
+lặp test xanh.
+
+Chạy nhanh bằng `mvn -f 05-testing-lab/pom.xml clean verify`.
+
 ## Tháng 8–10: Backend production
 
 Học theo thứ tự, chỉ thêm công nghệ khi đã mô tả được vấn đề nó giải quyết.
@@ -433,6 +447,27 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 - [`concurrency-lab`](concurrency-lab/README.md): thread lifecycle, Java Memory
   Model, lost update, `synchronized`, `volatile`, `AtomicLong`, `LongAdder` và
   concurrent test có timeout.
+Để học Java Generics trước khi bắt đầu Banking CLI, xem module
+[`00-java-generics`](00-java-generics/README.md). Module có ghi chú về wildcard,
+PECS và type erasure, cùng ví dụ generic repository và collection copy có test.
+### Bài thực hành hiện có
+
+- [`01-oop-payments`](01-oop-payments/README.md): học encapsulation, abstraction,
+  inheritance, composition và polymorphism qua ba phương thức thanh toán, kèm
+  unit test cho từng implementation.
+- [`01-streams-optional`](01-streams-optional/README.md): functional interface,
+  method reference, Stream API, báo cáo giao dịch và cách dùng `Optional` đúng
+  chỗ.
+### Lab hiện có
+
+- [`collections-lab`](collections-lab/README.md): contract của Java Collections,
+  hashing, ordering/equality, iterator fail-fast, JMH benchmark và transaction
+  history hỗ trợ filter, sort, group.
+### Bài mẫu Java Core
+
+- [`notification-composition-demo`](notification-composition-demo/README.md):
+  interface và abstract class, default method, is-a/has-a, cùng bài refactor từ
+  inheritance sai sang notification strategy dùng composition.
 ### Bài thực hành Java Core
 
 - [`00-java-object-contracts`](00-java-object-contracts/README.md): identity,
@@ -448,6 +483,7 @@ Mỗi project nên nằm trong một thư mục riêng và có README riêng, v�
 
 ```text
 studyforge-java-springboot/
+├── 00-java-generics/
 ├── 01-banking-cli/
 ├── 02-expense-tracker/
 ├── 03-banking-api/
@@ -458,6 +494,34 @@ Commit theo lát cắt nhỏ có thể kiểm chứng (ví dụ: `feat: validate
 amount`) và mở pull request để tự review thiết kế, test và tài liệu trước khi
 merge.
 
+## Phòng lab JVM
+
+Thư mục [`jvm-lab`](./jvm-lab/) là một bài thực hành độc lập để nối chuỗi
+source code → bytecode → class loading → thực thi/JIT, quan sát vùng nhớ và GC,
+đồng thời tái hiện có kiểm soát `StackOverflowError` và heap
+`OutOfMemoryError`. Lab chỉ cần JDK 17 trở lên và không cần Maven.
+## Ví dụ SOLID: nghiệp vụ chuyển tiền
+
+Ví dụ trong `src/main/java/com/studyforge/transfer` đặt bốn abstraction nhỏ ở
+phía nghiệp vụ: `AccountRepository`, `TransactionRepository`,
+`NotificationPort` và `Clock`. `TransferService` chỉ biết các capability nó
+cần; nó không phụ thuộc JPA, SDK email hay đồng hồ hệ thống. Các implementation
+in-memory trong test cho thấy có thể kiểm thử policy chuyển tiền mà không khởi
+động Spring hoặc database.
+
+Đây là **Interface Segregation Principle (ISP)** vì notification không bị ép
+cài các method đọc/ghi account, và repository giao dịch không bị ép cung cấp
+method mà service không dùng. Không có interface cho `Account`, `Transaction`
+hay các exception: chúng không có nhiều capability/client hoặc ranh giới hạ
+tầng cần thay thế, nên thêm abstraction chỉ tạo boilerplate.
+
+Đây cũng là **Dependency Inversion Principle (DIP)**: policy cấp cao
+`TransferService` sở hữu nhu cầu dưới dạng port, còn adapter hạ tầng sẽ phụ
+thuộc vào port đó. **Dependency injection (DI)** là cơ chế truyền object cụ thể
+vào constructor. DIP là quyết định về hướng phụ thuộc trong thiết kế; DI chỉ là
+một cách nối object để hiện thực quyết định ấy. Có thể dùng DI nhưng vẫn vi phạm
+DIP (ví dụ inject thẳng một class SDK email vào service), và có thể áp dụng DIP
+bằng cách tự khởi tạo/wire adapter mà không cần DI framework.
 ## Bài thực hành bổ sung
 
 - [`solid-transfer`](solid-transfer/README.md): characterization test và refactor SRP/OCP, kèm phân tích LSP về `Square extends Rectangle`, precondition, postcondition và invariant.
