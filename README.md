@@ -260,6 +260,12 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Bài thực hành hiện có
+
+- [`01-oop-payments`](01-oop-payments/README.md): học encapsulation, abstraction,
+  inheritance, composition và polymorphism qua ba phương thức thanh toán, kèm
+  unit test cho từng implementation.
+
 Mỗi project nên nằm trong một thư mục riêng và có README riêng, ví dụ:
 
 ```text
