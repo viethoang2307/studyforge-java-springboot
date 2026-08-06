@@ -268,6 +268,11 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Bài thực hành Java Core
+
+- [`00-java-object-contracts`](00-java-object-contracts/README.md): identity,
+  contract của `equals`/`hashCode`, lỗi mutable hash key, immutable value object
+  và defensive copy kèm JUnit tests.
 ### Bài tập hiện có
 
 - [`01-banking-cli`](01-banking-cli/README.md): class, constructor chaining,
