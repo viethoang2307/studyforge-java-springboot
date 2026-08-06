@@ -260,6 +260,12 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Bài mẫu Java Core
+
+- [`notification-composition-demo`](notification-composition-demo/README.md):
+  interface và abstract class, default method, is-a/has-a, cùng bài refactor từ
+  inheritance sai sang notification strategy dùng composition.
+
 Mỗi project nên nằm trong một thư mục riêng và có README riêng, ví dụ:
 
 ```text
