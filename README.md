@@ -260,6 +260,12 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Lab thực hành hiện có
+
+- [`concurrency-lab`](concurrency-lab/README.md): thread lifecycle, Java Memory
+  Model, lost update, `synchronized`, `volatile`, `AtomicLong`, `LongAdder` và
+  concurrent test có timeout.
+
 Mỗi project nên nằm trong một thư mục riêng và có README riêng, ví dụ:
 
 ```text
