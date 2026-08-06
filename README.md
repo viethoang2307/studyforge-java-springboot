@@ -441,6 +441,9 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+Để học Java Generics trước khi bắt đầu Banking CLI, xem module
+[`00-java-generics`](00-java-generics/README.md). Module có ghi chú về wildcard,
+PECS và type erasure, cùng ví dụ generic repository và collection copy có test.
 ### Bài thực hành hiện có
 
 - [`01-oop-payments`](01-oop-payments/README.md): học encapsulation, abstraction,
@@ -474,6 +477,7 @@ Mỗi project nên nằm trong một thư mục riêng và có README riêng, v�
 
 ```text
 studyforge-java-springboot/
+├── 00-java-generics/
 ├── 01-banking-cli/
 ├── 02-expense-tracker/
 ├── 03-banking-api/
