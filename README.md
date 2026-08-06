@@ -273,3 +273,26 @@ studyforge-java-springboot/
 Commit theo lát cắt nhỏ có thể kiểm chứng (ví dụ: `feat: validate transfer
 amount`) và mở pull request để tự review thiết kế, test và tài liệu trước khi
 merge.
+
+## Ví dụ SOLID: nghiệp vụ chuyển tiền
+
+Ví dụ trong `src/main/java/com/studyforge/transfer` đặt bốn abstraction nhỏ ở
+phía nghiệp vụ: `AccountRepository`, `TransactionRepository`,
+`NotificationPort` và `Clock`. `TransferService` chỉ biết các capability nó
+cần; nó không phụ thuộc JPA, SDK email hay đồng hồ hệ thống. Các implementation
+in-memory trong test cho thấy có thể kiểm thử policy chuyển tiền mà không khởi
+động Spring hoặc database.
+
+Đây là **Interface Segregation Principle (ISP)** vì notification không bị ép
+cài các method đọc/ghi account, và repository giao dịch không bị ép cung cấp
+method mà service không dùng. Không có interface cho `Account`, `Transaction`
+hay các exception: chúng không có nhiều capability/client hoặc ranh giới hạ
+tầng cần thay thế, nên thêm abstraction chỉ tạo boilerplate.
+
+Đây cũng là **Dependency Inversion Principle (DIP)**: policy cấp cao
+`TransferService` sở hữu nhu cầu dưới dạng port, còn adapter hạ tầng sẽ phụ
+thuộc vào port đó. **Dependency injection (DI)** là cơ chế truyền object cụ thể
+vào constructor. DIP là quyết định về hướng phụ thuộc trong thiết kế; DI chỉ là
+một cách nối object để hiện thực quyết định ấy. Có thể dùng DI nhưng vẫn vi phạm
+DIP (ví dụ inject thẳng một class SDK email vào service), và có thể áp dụng DIP
+bằng cách tự khởi tạo/wire adapter mà không cần DI framework.
