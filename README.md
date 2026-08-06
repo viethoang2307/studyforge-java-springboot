@@ -442,6 +442,11 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Lab thực hành hiện có
+
+- [`concurrency-lab`](concurrency-lab/README.md): thread lifecycle, Java Memory
+  Model, lost update, `synchronized`, `volatile`, `AtomicLong`, `LongAdder` và
+  concurrent test có timeout.
 Để học Java Generics trước khi bắt đầu Banking CLI, xem module
 [`00-java-generics`](00-java-generics/README.md). Module có ghi chú về wildcard,
 PECS và type erasure, cùng ví dụ generic repository và collection copy có test.
