@@ -23,6 +23,10 @@ thích các quyết định kỹ thuật thay vì chỉ chạy được tutorial
 
 ## Tháng 1–2: Từ zero đến Java Core
 
+> Bài thực hành nền tảng: [mô hình dữ liệu và object trong
+> Java](java-object-model.md), kèm các chương trình nhỏ có assertion để kiểm
+> chứng primitive/reference, equality, pass-by-value, boxing và biểu diễn số.
+
 ### Kiến thức
 
 - Biến, kiểu dữ liệu, điều kiện, vòng lặp và hàm.
