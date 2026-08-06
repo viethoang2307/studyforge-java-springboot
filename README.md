@@ -1,5 +1,8 @@
 # StudyForge — Lộ trình Java Backend trong 12 tháng
 
+> **Bài thực hành hiện tại:** [Banking Core thuần Java](BANKING_CORE.md) triển khai account,
+> deposit, withdrawal, transfer, lịch sử, fee strategy, notification port và các invariant bằng test.
+
 Lộ trình này dành cho người bắt đầu từ con số 0, học khoảng **10–12 giờ mỗi
 tuần**. Mục tiêu cuối năm là có nền tảng Java Backend vững, một project
 Digital Wallet đủ chiều sâu để trình bày khi ứng tuyển Junior, và khả năng giải
@@ -17,6 +20,7 @@ thích các quyết định kỹ thuật thay vì chỉ chạy được tutorial
 - [Tháng 4: SQL và PostgreSQL](#tháng-4-sql-và-postgresql)
 - [Tháng 5–6: Spring Boot và REST API](#tháng-56-spring-boot-và-rest-api)
 - [Tháng 7: Security và testing](#tháng-7-security-và-testing)
+- [Testing Lab thực hành](#testing-lab-thực-hành)
 - [Tháng 8–10: Backend production](#tháng-810-backend-production)
 - [Tháng 11–12: Capstone](#tháng-1112-capstone-digital-wallet-system)
 - [Lịch học và cách tự đánh giá](#lịch-học-mỗi-tuần)
@@ -323,6 +327,15 @@ dependency đang quá tải.
 thiếu tiền, tài khoản không tồn tại, số tiền không hợp lệ và rollback. Không lưu
 password thô, secret hay token vào Git/log.
 
+## Testing Lab thực hành
+
+Thư mục [`05-testing-lab`](05-testing-lab/README.md) là ví dụ chạy được về test
+pyramid, JUnit 5, Mockito, kiểm tra state/behavior, invariant và concurrent
+behavior. Module cũng cấu hình JaCoCo và cung cấp một bài tập refactor theo vòng
+lặp test xanh.
+
+Chạy nhanh bằng `mvn -f 05-testing-lab/pom.xml clean verify`.
+
 ## Tháng 8–10: Backend production
 
 Học theo thứ tự, chỉ thêm công nghệ khi đã mô tả được vấn đề nó giải quyết.
@@ -431,6 +444,19 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 Để học Java Generics trước khi bắt đầu Banking CLI, xem module
 [`00-java-generics`](00-java-generics/README.md). Module có ghi chú về wildcard,
 PECS và type erasure, cùng ví dụ generic repository và collection copy có test.
+### Bài thực hành hiện có
+
+- [`01-oop-payments`](01-oop-payments/README.md): học encapsulation, abstraction,
+  inheritance, composition và polymorphism qua ba phương thức thanh toán, kèm
+  unit test cho từng implementation.
+- [`01-streams-optional`](01-streams-optional/README.md): functional interface,
+  method reference, Stream API, báo cáo giao dịch và cách dùng `Optional` đúng
+  chỗ.
+### Lab hiện có
+
+- [`collections-lab`](collections-lab/README.md): contract của Java Collections,
+  hashing, ordering/equality, iterator fail-fast, JMH benchmark và transaction
+  history hỗ trợ filter, sort, group.
 ### Bài mẫu Java Core
 
 - [`notification-composition-demo`](notification-composition-demo/README.md):
