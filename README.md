@@ -1,5 +1,8 @@
 # StudyForge — Lộ trình Java Backend trong 12 tháng
 
+> **Bài thực hành hiện tại:** [Banking Core thuần Java](BANKING_CORE.md) triển khai account,
+> deposit, withdrawal, transfer, lịch sử, fee strategy, notification port và các invariant bằng test.
+
 Lộ trình này dành cho người bắt đầu từ con số 0, học khoảng **10–12 giờ mỗi
 tuần**. Mục tiêu cuối năm là có nền tảng Java Backend vững, một project
 Digital Wallet đủ chiều sâu để trình bày khi ứng tuyển Junior, và khả năng giải
