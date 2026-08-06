@@ -17,6 +17,7 @@ thích các quyết định kỹ thuật thay vì chỉ chạy được tutorial
 - [Tháng 4: SQL và PostgreSQL](#tháng-4-sql-và-postgresql)
 - [Tháng 5–6: Spring Boot và REST API](#tháng-56-spring-boot-và-rest-api)
 - [Tháng 7: Security và testing](#tháng-7-security-và-testing)
+- [Testing Lab thực hành](#testing-lab-thực-hành)
 - [Tháng 8–10: Backend production](#tháng-810-backend-production)
 - [Tháng 11–12: Capstone](#tháng-1112-capstone-digital-wallet-system)
 - [Lịch học và cách tự đánh giá](#lịch-học-mỗi-tuần)
@@ -322,6 +323,15 @@ dependency đang quá tải.
 **Mốc kiểm tra:** nghiệp vụ chuyển tiền phải có test cho giao dịch thành công,
 thiếu tiền, tài khoản không tồn tại, số tiền không hợp lệ và rollback. Không lưu
 password thô, secret hay token vào Git/log.
+
+## Testing Lab thực hành
+
+Thư mục [`05-testing-lab`](05-testing-lab/README.md) là ví dụ chạy được về test
+pyramid, JUnit 5, Mockito, kiểm tra state/behavior, invariant và concurrent
+behavior. Module cũng cấu hình JaCoCo và cung cấp một bài tập refactor theo vòng
+lặp test xanh.
+
+Chạy nhanh bằng `mvn -f 05-testing-lab/pom.xml clean verify`.
 
 ## Tháng 8–10: Backend production
 
