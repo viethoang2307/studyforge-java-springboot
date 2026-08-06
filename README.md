@@ -428,6 +428,11 @@ Cuối mỗi tuần, trả lời bốn câu hỏi:
 
 ## Cách dùng repository này
 
+### Bài thực hành hiện có
+
+- [`01-streams-optional`](01-streams-optional/README.md): functional interface,
+  method reference, Stream API, báo cáo giao dịch và cách dùng `Optional` đúng
+  chỗ.
 ### Lab hiện có
 
 - [`collections-lab`](collections-lab/README.md): contract của Java Collections,
