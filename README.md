@@ -273,3 +273,7 @@ studyforge-java-springboot/
 Commit theo lát cắt nhỏ có thể kiểm chứng (ví dụ: `feat: validate transfer
 amount`) và mở pull request để tự review thiết kế, test và tài liệu trước khi
 merge.
+
+## Bài thực hành bổ sung
+
+- [`solid-transfer`](solid-transfer/README.md): characterization test và refactor SRP/OCP, kèm phân tích LSP về `Square extends Rectangle`, precondition, postcondition và invariant.
