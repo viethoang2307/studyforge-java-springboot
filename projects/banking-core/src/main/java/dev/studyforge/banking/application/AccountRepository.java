@@ -1,0 +1,1 @@
+package dev.studyforge.banking.application; import dev.studyforge.banking.domain.*; import java.util.*; public interface AccountRepository{Optional<Account> findById(AccountId id); void add(Account account); void save(Account account);}

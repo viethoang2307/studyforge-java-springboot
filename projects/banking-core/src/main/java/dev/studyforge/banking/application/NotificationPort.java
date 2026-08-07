@@ -1,0 +1,1 @@
+package dev.studyforge.banking.application; import dev.studyforge.banking.domain.Transaction; @FunctionalInterface public interface NotificationPort{void transactionCompleted(Transaction transaction);}

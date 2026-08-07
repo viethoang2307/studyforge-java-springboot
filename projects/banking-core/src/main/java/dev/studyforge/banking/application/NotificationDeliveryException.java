@@ -1,0 +1,1 @@
+package dev.studyforge.banking.application; import dev.studyforge.banking.domain.*; public final class NotificationDeliveryException extends BankingException{public NotificationDeliveryException(Transaction t,Throwable cause){super("Transaction committed but notification failed for "+t.id(),cause);}}

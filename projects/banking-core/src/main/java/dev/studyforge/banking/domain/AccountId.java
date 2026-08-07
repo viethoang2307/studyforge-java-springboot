@@ -1,0 +1,1 @@
+package dev.studyforge.banking.domain; import java.util.*; public record AccountId(String value){public AccountId{Objects.requireNonNull(value);if(value.isBlank())throw new InvalidBankingOperationException("Account id must not be blank");}}
