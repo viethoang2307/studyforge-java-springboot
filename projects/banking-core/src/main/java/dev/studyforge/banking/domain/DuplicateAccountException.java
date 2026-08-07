@@ -1,0 +1,1 @@
+package dev.studyforge.banking.domain; public final class DuplicateAccountException extends BankingException{public DuplicateAccountException(AccountId id){super("Account already exists: "+id.value());}}

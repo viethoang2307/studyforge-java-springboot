@@ -1,0 +1,1 @@
+package dev.studyforge.banking.application; import dev.studyforge.banking.domain.*; import java.util.*; public interface TransactionRepository{void save(Transaction transaction); List<Transaction> findAll();}
